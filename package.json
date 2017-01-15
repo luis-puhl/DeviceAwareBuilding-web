@@ -1,0 +1,22 @@
+{
+  "name": "dab-web",
+  "version": "1.0.0",
+  "description": "Some tshark\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[C\u001b[C\u001b[C\u001b[C\u001b[1;2D\u001b[1;2D\u001b[1;2D\u001b[1;2D\u001b[1;2D\u001b[C\u001b[C\u001b[C\u001b A frontend for some tshark Shenanigans",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/luis-puhl/DeviceAwareBuilding-web.git"
+  },
+  "author": "Luis-Puhl",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/luis-puhl/DeviceAwareBuilding-web/issues"
+  },
+  "homepage": "https://github.com/luis-puhl/DeviceAwareBuilding-web#readme",
+  "dependencies": {
+    "mqtt": "^2.2.1"
+  }
+}

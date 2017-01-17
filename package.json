@@ -17,6 +17,11 @@
   },
   "homepage": "https://github.com/luis-puhl/DeviceAwareBuilding-web#readme",
   "dependencies": {
-    "mqtt": "^2.2.1"
+    "http": "0.0.0",
+    "mqtt": "^2.2.1",
+    "node-static": "^0.7.9",
+    "socketio": "^1.0.0",
+    "util": "^0.10.3",
+    "websocket": "^1.0.24"
   }
 }

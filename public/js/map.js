@@ -2,7 +2,7 @@ google.maps.event.addDomListener(window, 'load', init);
 var map;
 function init() {
 	var mapOptions = {
-		center: new google.maps.LatLng(-22.344345,-49.029427),
+		center: new google.maps.LatLng(-22.344478, -49.029336),
 		zoom: 21,
 		zoomControl: true,
 		zoomControlOptions: {
@@ -27,7 +27,10 @@ function init() {
 	var mapElement = document.getElementById('map');
 	var map = new google.maps.Map(mapElement, mapOptions);
 	var locations = [
-		['Ltia Salao', 'MAC RSSI', 'undefined', 'undefined', 'undefined', -22.3445649,	-49.0292842, 'https://mapbuildr.com/assets/img/markers/default.png'],['Ltia Aula', 'RSSI: MAC\\<br /><br />MAC2: RSSI2 - SSID', 'undefined', 'undefined', 'undefined', -22.3443720,	-49.0294624, 'https://mapbuildr.com/assets/img/markers/default.png']
+		['Ltia Salao', '', 'undefined', 'undefined', 'undefined',	-22.344522, -49.029235,
+		'/img/solid-pin-blue.png'],
+		['Ltia Aula', '', 'undefined', 'undefined', 'undefined',	-22.344337, -49.029390,
+		'/img/solid-pin-green.png']
 	];
 	for (i = 0; i < locations.length; i++) {
 		if (locations[i][1] =='undefined'){ description ='';} else { description = locations[i][1];}
@@ -64,7 +67,7 @@ function init() {
 					iw.close();
 					infoWindowVisible(false);
 				} else {
-					var html= "<div style='color:#000;background-color:#fff;padding:5px;width:150px;'><h4>"+title+"</h4><p>"+desc+"<p></div>";
+					var html= "<div class='gm-popup'><h4>"+title+"</h4><p>"+desc+"<p></div>";
 					iw = new google.maps.InfoWindow({content:html});
 					iw.open(map,marker);
 					infoWindowVisible(true);

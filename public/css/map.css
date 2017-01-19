@@ -1,15 +1,19 @@
 #map {
-	height:840px;
-	width:960px;
+	height:600px;
+	width:700px;
 }
-.gm-style-iw * {
-	display: block;
-	width: 100%;
+
+body {
+	padding-top: 50px;
 }
-.gm-style-iw h4, .gm-style-iw p {
-	margin: 0;
-	padding: 0;
+
+.main-stuff{
+	margin-top: 1rem;
 }
-.gm-style-iw a {
-	color: #4272db;
+
+.container.foot {
+	padding-right: 15px;
+	padding-left: 15px;
+	margin-right: auto;
+	margin-left: auto;
 }

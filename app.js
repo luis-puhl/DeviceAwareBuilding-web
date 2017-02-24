@@ -1,3 +1,27 @@
+const http = require('http');
+
+const webroot = './public';
+const webport = 80;
+
+const child_process = require('child_process');
+let httpServerChild = child_process.exec(`http-server ${webroot} -p ${webport} -s`);
+httpServerChild.on('error', (err) => {
+	console.error(`httpServerChild ERROR: ${err}`);
+});
+httpServerChild.on('close', (code) => {
+	console.log(`child process exited with code ${code}`);
+});
+httpServerChild.stdout.setEncoding('utf8');
+httpServerChild.stderr.on('data', (data) => {
+	/* for future use */
+	console.error(`stderr: ${data}`);
+});
+httpServerChild.stdout.on('data', (data) => {
+	/* for future use */
+	console.log(`http-server: ${data}`);
+});
+
+
 /* ----------------------------------------------------------------------	 */
 let WebSocketServer = require('websocket').server;
 

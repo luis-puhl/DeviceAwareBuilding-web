@@ -1,6 +1,9 @@
 var express = require('express');
 var expressApp = express();
 
-expressApp.use(express.static(__dirname + '/public'));
+const webRoot = '/public';
+const webPort = 80;
 
-expressApp.listen(80);
+expressApp.use(express.static(__dirname + webRoot));
+
+expressApp.listen(webPort);

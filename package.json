@@ -18,6 +18,7 @@
   "homepage": "https://github.com/luis-puhl/DeviceAwareBuilding-web#readme",
   "dependencies": {
     "express": "^4.14.1",
+    "mqtt": "^2.4.0",
     "websocket": "^1.0.24"
   }
 }

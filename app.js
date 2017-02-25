@@ -2,7 +2,8 @@
 
 const http = require('http');
 const websocket = require('websocket');
-const express = require("express");
+const express = require('express');
+const EventEmitter = require('events');
 
 /* -------------------------------------------------------------------------- */
 
@@ -36,3 +37,13 @@ websocketHandler(wsServer);
 /* -------------------------------------------------------------------------- */
 
 httpServer.listen(webPort);
+
+/* -------------------------------------------------------------------------- */
+
+class webSocketsMqttEventsEmitter extends EventEmitter {}
+const webSocketsMqttEvents = new webSocketsMqttEventsEmitter();
+
+/* -------------------------------------------------------------------------- */
+
+const mqttHandler = require('./src/mqttHandler.js');
+mqttHandler(webSocketsMqttEvents);

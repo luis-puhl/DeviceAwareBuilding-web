@@ -4,47 +4,20 @@ const EventEmitter = require('events');
 
 /* -------------------------------------------------------------------------- */
 
-class webSocketEventsEmitter extends EventEmitter {}
-const webSocketServerEvents = new webSocketEventsEmitter();
-const webSocketEvents = new webSocketEventsEmitter();
-
-/* -------------------------------------------------------------------------- */
-
-// generic server
-webSocketServerEvents.on('connection', (ws) => {
-	console.info("webSocketServerEvents connection open");
-	ws.send('wellcome');
-});
-
-// generic connection
-webSocketEvents.on('message', function incoming(message, ws) {
-	if (message.type !== 'utf8') {
-		return;
-	}
-	let messageStr = message.utf8Data;
-	console.log('webSocketEvents received: %s', messageStr);
-	ws.send(`echo: ${messageStr}`);
-});
-
-// echo protocol
-/*
-webSocketEvents.on('message', function(message, connection) {
-	if (message.type === 'utf8') {
-		console.log('Received Message: ' + message.utf8Data);
-		connection.sendUTF(message.utf8Data);
-	}
-	else if (message.type === 'binary') {
-		console.log('Received Binary Message of ' + message.binaryData.length + ' bytes');
-		connection.sendBytes(message.binaryData);
-	}
-});
-*/
-
-
-/* -------------------------------------------------------------------------- */
-
 module.exports = (wsServer) => {
-	wsServer.on('request', function(request) {
+	let connections = [];
+	let getStableConnections = () => {
+		connections = connections.reduce( (stableConnections, connection) => {
+			if (!connection.connected){
+				return;
+			}
+			stableConnections.push(connection);
+		}, []);
+		return connections;
+	}
+
+	// server events
+	wsServer.on('request', (request) => {
 		console.log('Got WS request.');
 
 		let originIsAllowed = (origin) => {
@@ -64,23 +37,66 @@ module.exports = (wsServer) => {
 			return;
 		}
 
-		var connection = request.accept(null, request.origin);
+		let connection = request.accept(null, request.origin);
 		console.log('WS request: connection accepted.');
-
-		// per connection config
-		webSocketEvents.emit('connect', connection);
-		connection.on('message', function(message) {
-			webSocketEvents.emit('message', message, connection);
-		});
-		connection.on('close', function(reasonCode, description) {
-			console.log(`Peer ${connection.remoteAddress} disconnected.`);
-			webSocketEvents.emit('close', reasonCode, description, connection);
-		});
+		return;
 	});
 	wsServer.on('connect', function(webSocketConnection) {
 		console.log('Got WS connect.');
-		webSocketServerEvents.emit('connect', webSocketConnection);
+
+		// Connection events
+		webSocketConnection.on('message', (message) => {
+			if (message.type !== 'utf8') {
+				return;
+			}
+			let messageStr = message.utf8Data;
+			console.log('webSocketEvents received: %s', messageStr);
+			/** echo protocol
+			webSoketsConnection.send(`echo: ${messageStr}`);
+			// */
+			// /** echo broadcast protocol
+			wsServer.emit('broadcast', 'ws on the floor echo: ${messageStr}');
+			// */
+		});
+		webSocketConnection.on('frame', (webSocketFrame) => {
+			// not handled by now
+		});
+		webSocketConnection.on('close', (reasonCode, description) => {
+			// will be handled by server events
+		});
+		webSocketConnection.on('error', (error) => {
+			console.error(`WS Connection error: ${error}`);
+		});
+		webSocketConnection.on('ping', (cancel, data) => {
+			// not handled by now
+		});
+		webSocketConnection.on('pong', (data) => {
+			// not handled by now
+		});
+		// Connection Extra events
+		this.on('send', (message) => {
+			this.webSoketsConnection.send(message);
+		});
+	});
+	wsServer.on('close', (webSocketConnection, closeReason, description) => {
+		console.log(`WS Connection terminated with '${description}'`);
+		connections = getStableConnections();
+	});
+	// extra server events
+	wsServer.on('broadcast', (message) => {
+		console.info("Broadcasting");
+		let msgCount = getStableConnections().reduce( (msgCount, connection) => {
+			if (!connection.connected){
+				return;
+			}
+			connection.emit('send', message);
+			msgCount++;
+		}, 0);
+		console.info(`Broadcasted to ${msgCount} connections`);
 	});
 
-	return wsServer;
+	return {
+		wsServer: wsServer,
+		get wsConnections() { return getStableConnections() },
+	};
 }

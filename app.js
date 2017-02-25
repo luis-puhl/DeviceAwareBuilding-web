@@ -40,10 +40,31 @@ httpServer.listen(webPort);
 
 /* -------------------------------------------------------------------------- */
 
-class webSocketsMqttEventsEmitter extends EventEmitter {}
-const webSocketsMqttEvents = new webSocketsMqttEventsEmitter();
+class webSocketsMqttEventsEmitter extends EventEmitter {
+	constructor(mqttClient, webSocketsServer){
+		super();
+		this.on('mqtt-send', (message) =>{
+			// do send by MQTT
+		});
+		this.on('mqtt-recieved', (message) =>{
+			// do logic
+			// do send to WS
+		});
+		this.on('ws-send', (message) =>{
+			// do send by WS
+		});
+		this.on('ws-recieved', (message) =>{
+			// do logic
+			// do send to MQTT
+		});
+		webSocketsServer.emit('broadcast', 'mqtt-ws on the floor');
+	}
+}
 
 /* -------------------------------------------------------------------------- */
 
+const config = require('./.config');
 const mqttHandler = require('./src/mqttHandler.js');
-mqttHandler(webSocketsMqttEvents);
+clientMqtt = mqttHandler(config);
+
+const webSocketsMqttEvents = new webSocketsMqttEventsEmitter(clientMqtt, wsServer);

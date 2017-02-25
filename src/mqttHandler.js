@@ -4,7 +4,7 @@ const mqtt = require('mqtt');
 
 /* -------------------------------------------------------------------------- */
 
-module.exports = (config, webSocketsMqttEvents) => {
+module.exports = (config) => {
 	let clientMqtt	= mqtt.connect(`mqtt://${config.mqttHost}:${config.mqttPort}`, {
 		username	: config.mqttUser,
 		password	: config.mqttPwd,

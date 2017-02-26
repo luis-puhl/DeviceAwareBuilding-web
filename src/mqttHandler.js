@@ -23,6 +23,7 @@ module.exports = (config) => {
 		let messageStr = message.toString();
 	});
 	clientMqtt.on('send', function (topic, message) {
+		console.log(`MQTT send to ${topic}: ${message}`);
 		clientMqtt.publish(topic, message);
 	});
 

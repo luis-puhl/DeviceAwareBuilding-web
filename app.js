@@ -49,10 +49,13 @@ class webSocketsMqttEventsEmitter extends EventEmitter {
 		this.mqttClient.on('message', (topic, message) => {
 			this.emit('mqtt-recieved', topic, message);
 		});
+		this.webSocketsServer.on('ws-recieved', (connecntion, message) => {
+			this.emit('ws-recieved', message);
+		});
 
-		this.on('mqtt-send', (message) =>{
+		this.on('mqtt-send', (topic, message) =>{
 			// do send by MQTT
-			this.mqttClient.emit('send', 'mqtt-ws', message);
+			this.mqttClient.emit('send', topic, message);
 		});
 		this.on('mqtt-recieved', (topic, message) =>{
 			// do logic
@@ -73,20 +76,22 @@ class webSocketsMqttEventsEmitter extends EventEmitter {
 			// do send by WS
 			this.webSocketsServer.emit('broadcast', message);
 		});
-		this.on('ws-recieved', (message) =>{
+		this.on('ws-recieved', (message) => {
 			// do logic
+			console.log(`ws-recieved: ${message}`)
 			let packet;
 			try {
-				packet = JSON.parse(message);
+				packet = JSON.parse(message.toString());
+				console.log(`ws-recieved JSON`);
 			} catch (e) {
 				console.log(`mqtt-ws cant parse ws message: ${e}`);
 				return;
 			}
 
 			// do send to MQTT
+			console.log(`ws-recieved TO mqtt-send`);
 			this.emit('mqtt-send', packet.mqtt.topic, packet.mqtt.message);
 		});
-		webSocketsServer.emit('broadcast', 'mqtt-ws on the floor');
 	}
 }
 

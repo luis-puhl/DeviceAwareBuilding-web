@@ -23,6 +23,7 @@
   function onOpen(evt) {
     writeToScreen("CONNECTED");
     doSend("WebSocket rocks");
+    doSend('{"mqtt":{"topic":"dab/admin","message":"echo"}}');
   }
 
   function onClose(evt) {

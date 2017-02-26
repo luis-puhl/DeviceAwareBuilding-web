@@ -57,11 +57,12 @@ module.exports = (wsServer) => {
 			}
 			let messageStr = message.utf8Data;
 			console.log(`webSocketEvents received: ${messageStr}`);
+			wsServer.emit('ws-recieved', webSocketConnection, messageStr);
 			/** echo protocol
 			webSoketsConnection.send(`echo: ${messageStr}`);
 			// */
 			// /** echo broadcast protocol
-			wsServer.emit('broadcast', `ws on the floor echo: ${messageStr}`);
+			wsServer.emit('broadcast', `ws-echo: ${messageStr}`);
 			// */
 		});
 		webSocketConnection.on('frame', (webSocketFrame) => {

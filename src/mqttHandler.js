@@ -21,16 +21,9 @@ module.exports = (config) => {
 		// message is Buffer
 		let topicStr = topic.toString();
 		let messageStr = message.toString();
-
-		if (!sharedWS){
-			return;
-		}
-		sharedWS.send( JSON.stringify({
-			mqtt: {
-				topic: topicStr,
-				message: messageStr,
-			},
-		}) );
+	});
+	clientMqtt.on('send', function (topic, message) {
+		clientMqtt.publish(topic, message);
 	});
 
 	console.log("mqtt client created");

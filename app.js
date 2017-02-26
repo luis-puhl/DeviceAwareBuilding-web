@@ -43,19 +43,48 @@ httpServer.listen(webPort);
 class webSocketsMqttEventsEmitter extends EventEmitter {
 	constructor(mqttClient, webSocketsServer){
 		super();
+		this.mqttClient = mqttClient;
+		this.webSocketsServer = webSocketsServer;
+
+		this.mqttClient.on('message', (topic, message) => {
+			this.emit('mqtt-recieved', topic, message);
+		});
+
 		this.on('mqtt-send', (message) =>{
 			// do send by MQTT
+			this.mqttClient.emit('send', 'mqtt-ws', message);
 		});
-		this.on('mqtt-recieved', (message) =>{
+		this.on('mqtt-recieved', (topic, message) =>{
 			// do logic
+
+			// message is Buffer
+			let topicStr = topic.toString();
+			let messageStr = message.toString();
+
 			// do send to WS
+			this.emit('ws-send', JSON.stringify({
+				mqtt: {
+					topic: topicStr,
+					message: messageStr,
+				},
+			}) );
 		});
 		this.on('ws-send', (message) =>{
 			// do send by WS
+			this.webSocketsServer.emit('broadcast', message);
 		});
 		this.on('ws-recieved', (message) =>{
 			// do logic
+			let packet;
+			try {
+				packet = JSON.parse(message);
+			} catch (e) {
+				console.log(`mqtt-ws cant parse ws message: ${e}`);
+				return;
+			}
+
 			// do send to MQTT
+			this.emit('mqtt-send', packet.mqtt.topic, packet.mqtt.message);
 		});
 		webSocketsServer.emit('broadcast', 'mqtt-ws on the floor');
 	}

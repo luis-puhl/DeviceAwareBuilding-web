@@ -99,6 +99,6 @@ class webSocketsMqttEventsEmitter extends EventEmitter {
 
 const config = require('./.config');
 const mqttHandler = require('./src/mqttHandler.js');
-clientMqtt = mqttHandler(config);
+let clientMqtt = mqttHandler(config);
 
 const webSocketsMqttEvents = new webSocketsMqttEventsEmitter(clientMqtt, wsServer);

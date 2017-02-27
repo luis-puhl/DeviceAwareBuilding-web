@@ -1,5 +1,5 @@
+/* eslint no-undef: 0 */
 google.maps.event.addDomListener(window, 'load', init);
-var map;
 function init() {
 	var mapOptions = {
 		center: new google.maps.LatLng(-22.344478, -49.029336),
@@ -32,7 +32,7 @@ function init() {
 		['Ltia Aula', '', 'undefined', 'undefined', 'undefined',	-22.344337, -49.029390,
 		'/img/solid-pin-green.png']
 	];
-	for (i = 0; i < locations.length; i++) {
+	for (let i = 0; i < locations.length; i++) {
 		if (locations[i][1] =='undefined'){ description ='';} else { description = locations[i][1];}
 		if (locations[i][2] =='undefined'){ telephone ='';} else { telephone = locations[i][2];}
 		if (locations[i][3] =='undefined'){ email ='';} else { email = locations[i][3];}

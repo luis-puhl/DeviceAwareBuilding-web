@@ -21,6 +21,7 @@ module.exports = (config) => {
 		// message is Buffer
 		let topicStr = topic.toString();
 		let messageStr = message.toString();
+		console.log(`MQTT message: [${topicStr}] ${messageStr}`);
 	});
 	clientMqtt.on('send', function (topic, message) {
 		console.log(`MQTT send to ${topic}: ${message}`);

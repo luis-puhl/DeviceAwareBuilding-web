@@ -1,7 +1,5 @@
 #!/usr/bin/env node
 
-const EventEmitter = require('events');
-
 /* -------------------------------------------------------------------------- */
 
 class Connections extends Array {
@@ -43,7 +41,7 @@ module.exports = (wsServer) => {
 			return;
 		}
 
-		let connection = request.accept(null, request.origin);
+		request.accept(null, request.origin);
 		console.log('WS request: connection accepted.');
 		return;
 	});
@@ -65,21 +63,25 @@ module.exports = (wsServer) => {
 			wsServer.emit('broadcast', `ws-echo: ${messageStr}`);
 			// */
 		});
+		/*
 		webSocketConnection.on('frame', (webSocketFrame) => {
 			// not handled by now
 		});
 		webSocketConnection.on('close', (reasonCode, description) => {
 			// will be handled by server events
 		});
+		*/
 		webSocketConnection.on('error', (error) => {
 			console.error(`WS Connection error: ${error}`);
 		});
+		/*
 		webSocketConnection.on('ping', (cancel, data) => {
 			// not handled by now
 		});
 		webSocketConnection.on('pong', (data) => {
 			// not handled by now
 		});
+		*/
 		// Connection Extra events
 		webSocketConnection.on('send', (message) => {
 			console.log(`WS send: ${message}`)

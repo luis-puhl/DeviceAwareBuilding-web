@@ -67,7 +67,7 @@ function init() {
 					iw.close();
 					infoWindowVisible(false);
 				} else {
-					var html= "<div class='gm-popup'><h4>"+title+"</h4><p>"+desc+"<p></div>";
+					var html = "<div class='gm-popup'><h4>"+title+"</h4><p>"+desc+"<p>"+link+"</div>";
 					iw = new google.maps.InfoWindow({content:html});
 					iw.open(map,marker);
 					infoWindowVisible(true);

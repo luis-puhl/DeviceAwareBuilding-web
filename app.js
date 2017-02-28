@@ -41,40 +41,14 @@ httpServer.listen(webPort);
 /* -------------------------------------------------------------------------- */
 
 class webSocketsMqttEventsEmitter extends EventEmitter {
-	constructor(mqttClient, webSocketsServer){
-		super();
-		this.mqttClient = mqttClient;
-		this.webSocketsServer = webSocketsServer;
-
-		this.mqttClient.on('message', (topic, message) => {
-			this.emit('mqtt-recieved', topic, message);
-		});
-		this.webSocketsServer.on('ws-recieved', (connecntion, message) => {
+	appendWsServer(wsServer){
+		wsServer.on('ws-recieved', (connecntion, message) => {
 			this.emit('ws-recieved', message);
 		});
 
-		this.on('mqtt-send', (topic, message) =>{
-			// do send by MQTT
-			this.mqttClient.emit('send', topic, message);
-		});
-		this.on('mqtt-recieved', (topic, message) =>{
-			// do logic
-
-			// message is Buffer
-			let topicStr = topic.toString();
-			let messageStr = message.toString();
-
-			// do send to WS
-			this.emit('ws-send', JSON.stringify({
-				mqtt: {
-					topic: topicStr,
-					message: messageStr,
-				},
-			}) );
-		});
 		this.on('ws-send', (message) =>{
 			// do send by WS
-			this.webSocketsServer.emit('broadcast', message);
+			wsServer.emit('broadcast', message);
 		});
 		this.on('ws-recieved', (message) => {
 			// do logic
@@ -93,6 +67,31 @@ class webSocketsMqttEventsEmitter extends EventEmitter {
 			this.emit('mqtt-send', packet.mqtt.topic, packet.mqtt.message);
 		});
 	}
+	appendMqttClient(mqttClient){
+		mqttClient.on('message', (topic, message) => {
+			this.emit('mqtt-recieved', topic, message);
+		});
+
+		this.on('mqtt-send', (topic, message) =>{
+			// do send by MQTT
+			mqttClient.emit('send', topic, message);
+		});
+		this.on('mqtt-recieved', (topic, message) =>{
+			// do logic
+
+			// message is Buffer
+			let topicStr = topic.toString();
+			let messageStr = message.toString();
+
+			// do send to WS
+			this.emit('ws-send', JSON.stringify({
+				mqtt: {
+					topic: topicStr,
+					message: messageStr,
+				},
+			}) );
+		});
+	}
 }
 
 /* -------------------------------------------------------------------------- */
@@ -101,4 +100,6 @@ const config = require('./.config');
 const mqttHandler = require('./src/mqttHandler.js');
 let clientMqtt = mqttHandler(config);
 
-const webSocketsMqttEvents = new webSocketsMqttEventsEmitter(clientMqtt, wsServer);
+const webSocketsMqttEvents = new webSocketsMqttEventsEmitter();
+webSocketsMqttEvents.appendMqttClient(clientMqtt);
+webSocketsMqttEvents.appendWsServer(wsServer);
